@@ -1,3 +1,42 @@
 Follow this tutorial to setup react & tailwindcss : 
 https://medium.com/@pushpendrapal_/how-to-setup-react-typescript-and-tailwind-css-with-vite-in-a-project-8d9b0b51d1bd
 
+1. How to make API calls?
+    * Install axios : 
+        ```bash
+        npm i axios @types/axios
+        ```
+    * Axios calls are async, so create a async function for each call as required, include error handling as a rule!. ex : 
+        ```typescript
+        const getAllTasks = async () => {
+            try {
+                const response : AxiosResponse = await axios.get(url);
+                console.log(response);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        ```
+    * Then export these functions so that they can be used later.
+
+2. Define the important types:
+    * Return types and the types you store in your useState() hooks have to be defined, so define types accordingly. ex :
+    ``` typescript
+    type Todo = {
+        _id: string;
+        name: string;
+        description: string;
+    }
+    ``` 
+
+3. How the API call functions to be organised in components?
+    * Create async functions in order to make use of API call functions.
+    * assign the setters from u seState hooks in those async functions. ex :
+    ``` typescript
+    const getEverything = async () => {
+        // Use the axios function
+        const tasks = await getAllTasks();
+        setTasks(tasks);
+    }
+    ```
+
