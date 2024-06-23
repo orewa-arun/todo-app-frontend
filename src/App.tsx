@@ -1,5 +1,14 @@
 import { useState } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+
+// bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// API
 import { getAllTasks } from "./API";
+
+// components
+import Todo from "./components/Todo";
 
 function App() {
 
@@ -15,14 +24,27 @@ function App() {
   }
 
   return (
-    <div>
+    <Container>
       <h1 className="text-4xl text-blue-500" >TODO-APP</h1>
       {
         !loading && (
-          <button className='show' onClick={displayTasks}>SHOW ALL TASKS</button>
+          <button className='show' onClick={displayTasks}>RELOAD TASKS</button>
         )
       }
-    </div>
+      <Row>
+        { !loading ? (
+            todos.map((todo) => (
+              <Col key={todo.name} className="mb-4">
+                <Todo todo={todo}/>
+              </Col>
+            ))
+          ) : (
+            <p>Loading...</p>
+          )
+        }
+      </Row>
+    </Container>
+
   )
 }
 
