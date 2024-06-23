@@ -29,3 +29,20 @@ export const createNewTodo = async (obj : {name : string, description : string})
         console.error(err);
     }
 } 
+
+export const updateTodo = async (id : string, obj : {name : string, description : string}, completionStatus : boolean) => {
+    try {
+        const response : AxiosResponse = await axios.put(`http://localhost:4000/api/update-todo/${id}`, {
+          name : obj.name,
+          description : obj.description,
+          status : completionStatus
+        },{
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        });
+        console.log(response);
+    } catch (err) {
+        console.error(err);
+    }
+}

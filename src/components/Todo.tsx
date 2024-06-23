@@ -1,45 +1,39 @@
-import React from "react";
-import { Card } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Card, Button } from "react-bootstrap";
+import { updateTodo } from "../API";
 
 type Props = {
     todo : Todo;
 }
 
 const Todo : React.FC<Props> = ({todo}) => {
-    return (
-        <Card style={{width: '18rem'}}>
-            <Card.Body>
-                <Card.Title>{todo.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{todo.description}</Card.Subtitle>
-                <Card.Text>Status : {todo.status? <p>Done!</p> : <p> Not Done Bitch</p>}</Card.Text>
-            </Card.Body>
-        </Card>
-    )
+  const [completionStatus, setCompletionStatus] = useState(false);
+
+  const updateCompletionStatus = () => setCompletionStatus(!completionStatus);
+
+  useEffect(() => {
+    updateTodo(todo._id, {name : todo.name, description : todo.description}, completionStatus);
+  },[completionStatus]);
+
+  return (
+      <Card style={{width: '18rem'}}>
+          <Card.Body>
+              <Card.Title>{todo.name}</Card.Title>
+              <Card.Subtitle className="mb-2 text-muted">{todo.description}</Card.Subtitle>
+              <Card.Text>Status : {todo.status? <p>Done!</p> : <p> Not Done Bitch</p>}</Card.Text>
+              <Button variant='primary' onClick={updateCompletionStatus}>
+                {/* Has to be cached in future or stored in local storage, because 
+                after refreshing the completionStatus goes back to being false!*/}
+                { completionStatus? (<span> Mark as incomplete</span>) : (
+                  <span>
+                    Mark as completed
+                  </span>
+                )
+                }
+              </Button>
+          </Card.Body>
+      </Card>
+  )
 }
 
 export default Todo;
-
-
-/*
-import Card from 'react-bootstrap/Card';
-
-function TextExample() {
-  return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-        <Card.Text>
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.
-        </Card.Text>
-        <Card.Link href="#">Card Link</Card.Link>
-        <Card.Link href="#">Another Link</Card.Link>
-      </Card.Body>
-    </Card>
-  );
-}
-
-export default TextExample;
-
- */
