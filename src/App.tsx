@@ -1,34 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
 // bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // API
-import { getAllTasks } from "./API";
+import { createNewTodo, getAllTodos } from "./API";
 
 // components
 import Todo from "./components/Todo";
+import CreateTodoModal from "./components/CreateTodoModal";
 
 function App() {
 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(false);
 
-  async function displayTasks(){
+  async function displayTodos(){
     setLoading(true);
-    const allTodos : Todo[] = await getAllTasks(); 
+    const allTodos : Todo[] = await getAllTodos(); 
 
     setTodos(allTodos);
     setLoading(false);
   }
+
+  // To display when the app starts
+  // and when todo changes
+  useEffect(() => {
+    displayTodos();
+  },[]);
 
   return (
     <Container>
       <h1 className="text-4xl text-blue-500" >TODO-APP</h1>
       {
         !loading && (
-          <button className='show' onClick={displayTasks}>RELOAD TASKS</button>
+          <button className='show' onClick={displayTodos}>RELOAD TASKS</button>
         )
       }
       <Row>
@@ -43,6 +50,7 @@ function App() {
           )
         }
       </Row>
+      <CreateTodoModal addNewTodo={createNewTodo}/>
     </Container>
 
   )
