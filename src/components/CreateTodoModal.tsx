@@ -3,9 +3,10 @@ import { Modal, Button, Form, Container } from "react-bootstrap";
 
 type Props = {
     addNewTodo : (object : {name : string, description : string}) => void;
+    editing? : boolean
 }
 
-const CreateTodoModal : React.FC<Props> = ({addNewTodo}) => {
+const CreateTodoModal : React.FC<Props> = ({addNewTodo, editing}) => {
 
     const [show, setShow] = useState(false);
 
@@ -38,7 +39,7 @@ const CreateTodoModal : React.FC<Props> = ({addNewTodo}) => {
         <Container>
             {/* This button is what you will be re-positioning when you re-position this component! */}
             <Button variant='primary' onClick={handleOpen}>
-                Create New Task
+                {editing? "edit" : "Create New task"}
             </Button>
 
             <Modal show={show} onHide={handleClose} centered>
