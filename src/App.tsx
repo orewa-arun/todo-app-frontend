@@ -9,25 +9,41 @@ import { createNewTodo, getAllTodos } from "./API";
 
 // components
 import Todo from "./components/Todo";
-import CreateTodoModal from "./components/CreateTodoModal";
+import TodoModal from "./components/TodoModal";
 
 function App() {
-
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todoList, setTodoList] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(false);
 
-  async function displayTodos(){
+  async function loadAllTodos(){
     setLoading(true);
     const allTodos : Todo[] = await getAllTodos(); 
 
-    setTodos(allTodos);
+    setTodoList(allTodos);
     setLoading(false);
   }
 
+  const addTodo = (todo : Todo) => {
+    setTodoList([
+      ...todoList,
+      todo
+    ]);
+  }
+
+  const updateTodo = (todo : Todo) => {
+    const newTodoList : Todo[] = todoList.filter(obj => obj._id !== todo._id);
+    setTodoList(newTodoList);
+    addTodo(todo);
+  }
+
+  const deleteTodo = (todo : Todo) => {
+    const newTodoList : Todo[] = todoList.filter(obj => obj !== todo);
+    setTodoList(newTodoList);
+  }
+
   // To display when the app starts
-  // and when todo changes
   useEffect(() => {
-    displayTodos();
+    loadAllTodos();
   },[]);
 
   return (
@@ -35,14 +51,15 @@ function App() {
       <h1 className="text-4xl text-blue-500" >TODO-APP</h1>
       {
         !loading && (
-          <button className='show' onClick={displayTodos}>RELOAD TASKS</button>
+          <button className='show' onClick={loadAllTodos}>RELOAD TASKS</button>
         )
       }
+      <TodoModal createOrUpdateTodo={createNewTodo} addOrUpdateTodo={addTodo}/>
       <Row>
         { !loading ? (
-            todos.map((todo) => (
+            todoList.map((todo) => (
               <Col key={todo.name} className="mb-4">
-                <Todo todo={todo}/>
+                <Todo todo={todo} modifyTodo={updateTodo} eraseTodo={deleteTodo}/>
               </Col>
             ))
           ) : (
@@ -50,7 +67,6 @@ function App() {
           )
         }
       </Row>
-      <CreateTodoModal addNewTodo={createNewTodo}/>
     </Container>
 
   )
