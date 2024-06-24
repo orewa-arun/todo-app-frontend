@@ -5,7 +5,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // API
-import { createNewTodo, getAllTodos } from "./API";
+import { getAllTodos, addTodo, updateTodo, deleteTodo } from "./API";
 
 // components
 import Todo from "./components/Todo";
@@ -23,20 +23,27 @@ function App() {
     setLoading(false);
   }
 
-  const addTodo = (todo : Todo) => {
+  const createNewTodo = async(obj : {name : string, description : string}) => {
+    const newTodo : Todo = (await addTodo({name : obj.name, description : obj.description})) as Todo;
+    console.log("new todo created! : ", newTodo);
     setTodoList([
       ...todoList,
-      todo
+      newTodo
     ]);
   }
 
-  const updateTodo = (todo : Todo) => {
-    const newTodoList : Todo[] = todoList.filter(obj => obj._id !== todo._id);
-    setTodoList(newTodoList);
-    addTodo(todo);
+  const modifyTodo = async(todoId : string, obj : {name : string, description : string}, todoStatus : boolean) => {
+    const updatedTodo : Todo = (await updateTodo(todoId, obj , todoStatus)) as Todo;
+    console.log("todo edited! : ", updatedTodo);
+    const newTodoList : Todo[] = todoList.filter(todo => todo._id !== todoId);
+    setTodoList([
+      ...newTodoList,
+      updatedTodo
+    ]);
   }
 
-  const deleteTodo = (todo : Todo) => {
+  const eraseTodo = async(todo : Todo) => {
+    await deleteTodo(todo._id);
     const newTodoList : Todo[] = todoList.filter(obj => obj !== todo);
     setTodoList(newTodoList);
   }
@@ -54,12 +61,12 @@ function App() {
           <button className='show' onClick={loadAllTodos}>RELOAD TASKS</button>
         )
       }
-      <TodoModal createOrUpdateTodo={createNewTodo} addOrUpdateTodo={addTodo}/>
+      <TodoModal createOrUpdateTodo={createNewTodo}/>
       <Row>
         { !loading ? (
             todoList.map((todo) => (
               <Col key={todo.name} className="mb-4">
-                <Todo todo={todo} modifyTodo={updateTodo} eraseTodo={deleteTodo}/>
+                <Todo todo={todo} modifyTodo={modifyTodo} eraseTodo={eraseTodo}/>
               </Col>
             ))
           ) : (

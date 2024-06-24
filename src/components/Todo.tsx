@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Card, Button, Container } from "react-bootstrap";
-import { updateTodo, deleteTodoById } from "../API";
+import { updateTodo } from "../API";
 import TodoModal from "./TodoModal";
 
 type Props = {
     todo : Todo;
-    modifyTodo : (todo : Todo) => void;
-    eraseTodo : (todo : Todo) => void;
+    modifyTodo : (todoId : string, obj : {name : string, description : string}, todoStatus : boolean) => Promise<void>;
+    eraseTodo : (todo : Todo) => Promise<void>;
 }
 
 const Todo : React.FC<Props> = ({todo, modifyTodo, eraseTodo}) => {
@@ -15,23 +15,20 @@ const Todo : React.FC<Props> = ({todo, modifyTodo, eraseTodo}) => {
   const [completionStatus, setCompletionStatus] = useState(todo.status);
 
   const updateCompletionStatus = async() => {
-    await updateTodo(todo._id, {name : updatedTodo.name, description : updatedTodo.description}, !completionStatus);
+    await updateTodo(todo._id, {name : todo.name, description : todo.description}, !completionStatus);
     setCompletionStatus(!completionStatus);
   }
 
-  const editTodo = async(editedTodo : {name : string, description : string}) : Promise<Todo | undefined> => {
-    const latestTodo = await updateTodo(todo._id, editedTodo, completionStatus);
-    // Updates partially
+  const editTodo = async(obj : {name : string, description : string}) => {
+    modifyTodo(todo._id, {name : obj.name, description : obj.description}, !completionStatus);
     setUpdatedTodo({
       ...updatedTodo,
-      ...editedTodo
+      ...obj
     });
-    return latestTodo;
   }
 
   const deleteTodo = async() => {
-    await deleteTodoById(todo._id);
-    eraseTodo(todo);
+    await eraseTodo(todo);
   }
 
   return (
@@ -40,7 +37,7 @@ const Todo : React.FC<Props> = ({todo, modifyTodo, eraseTodo}) => {
           <Card.Body>
               <Card.Title>
                 {updatedTodo.name}
-                <TodoModal createOrUpdateTodo={editTodo} editing={true} addOrUpdateTodo={modifyTodo}/>
+                <TodoModal createOrUpdateTodo={editTodo} editing={true}/>
                 <Button variant="danger" onClick={deleteTodo}>Delete</Button>
               </Card.Title>
               <Card.Subtitle className="mb-2 text-muted">{updatedTodo.description}</Card.Subtitle>

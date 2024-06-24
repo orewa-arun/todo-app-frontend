@@ -13,7 +13,7 @@ export const getAllTodos =  async () : Promise<Todo[]> => {
     }
 }
 
-export const createNewTodo = async (obj : {name : string, description : string}) : Promise<Todo | undefined> => {
+export const addTodo = async (obj : {name : string, description : string}) : Promise<Todo | undefined> => {
     try {
         const response : AxiosResponse = await axios.post('http://localhost:4000/api/add-todo', {
             name : obj.name,
@@ -50,7 +50,7 @@ export const updateTodo = async (id : string, obj : {name : string, description 
     }
 }
 
-export const deleteTodoById = async (id : string) => {
+export const deleteTodo = async (id : string) => {
     try {
         // const response : AxiosResponse = 
         await axios.delete(`http://localhost:4000/api/delete-todo/${id}`);

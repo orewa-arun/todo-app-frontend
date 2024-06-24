@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Modal, Button, Form, Container } from "react-bootstrap";
 
 type Props = {
-    createOrUpdateTodo : (obj : {name : string, description : string}) => Promise<Todo | undefined>;
+    // Either createNewTodo or modifyTodo function is passed as argument
+    createOrUpdateTodo : (obj : {name : string, description : string}) => Promise<void>;
     editing? : boolean
-    addOrUpdateTodo : (todo : Todo) => void
 }
 
-const TodoModal : React.FC<Props> = ({createOrUpdateTodo, editing, addOrUpdateTodo}) => {
+const TodoModal : React.FC<Props> = ({createOrUpdateTodo, editing}) => {
 
     const [show, setShow] = useState(false);
 
@@ -30,13 +30,7 @@ const TodoModal : React.FC<Props> = ({createOrUpdateTodo, editing, addOrUpdateTo
 
     const handleSubmit = async (e : React.FormEvent) => {
         e.preventDefault();
-        const newTodo : Todo = (await createOrUpdateTodo(formData)) as Todo;
-        if(!editing){
-            console.log("new todo created", newTodo);
-        } else {
-            console.log("todo edited", newTodo)
-        }
-        addOrUpdateTodo(newTodo);
+        createOrUpdateTodo(formData);
         handleClose();
     }
 
